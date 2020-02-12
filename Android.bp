@@ -11,6 +11,64 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
+
+genrule {
+    name: "statslog-permissioncontroller-java-gen",
+    tools: ["stats-log-api-gen"],
+    cmd: "$(location stats-log-api-gen) --java $(out) --module permissioncontroller --javaPackage com.android.packageinstaller --javaClass PermissionControllerStatsLog",
+    out: ["com/android/packageinstaller/PermissionControllerStatsLog.java"],
+}
+
+java_library {
+    name: "permissioncontroller-statsd",
+    sdk_version: "system_current",
+
+    srcs: [
+        ":statslog-permissioncontroller-java-gen",
+    ],
+}
+
+android_app {
+    name: "PermissionController",
+    privileged: true,
+    platform_apis: true,
+    certificate: "platform",
+
+    srcs: [
+        "src/**/*.java",
+        "src/**/*.proto",
+    ],
+
+    static_libs: [
+        "iconloader",
+        "com.google.android.material_material",
+        "androidx.transition_transition",
+        "androidx-constraintlayout_constraintlayout",
+        "androidx.core_core",
+        "androidx.media_media",
+        "androidx.legacy_legacy-support-core-utils",
+        "androidx.legacy_legacy-support-core-ui",
+        "androidx.fragment_fragment",
+        "androidx.appcompat_appcompat",
+        "androidx.preference_preference",
+        "androidx.recyclerview_recyclerview",
+        "androidx.legacy_legacy-preference-v14",
+        "androidx.leanback_leanback",
+        "androidx.leanback_leanback-preference",
+        "androidx.lifecycle_lifecycle-extensions",
+        "androidx.lifecycle_lifecycle-common-java8",
+        "SettingsLibHelpUtils",
+        "SettingsLibRestrictedLockUtils",
+        "SettingsLibAppPreference",
+        "SettingsLibSearchWidget",
+        "SettingsLibLayoutPreference",
+        "SettingsLibBarChartPreference",
+        "SettingsLibActionBarShadow",
+        "SettingsLibProgressBar",
+        "androidx.annotation_annotation",
+        "permissioncontroller-statsd"
+    ],
 
 // ====  c++ proto device library  ==============================
 cc_library {
